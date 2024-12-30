@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap');
+        
+        body {
+            background: #ffffff;
+            margin: 0;
+            font-family: 'Times New Roman', serif;
+            min-height: 100vh;
+        }
+
+        #loginPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #mainContent {
+            display: none;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 2rem 3rem;
+            border: 2px solid #000;
+            text-align: center;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .seal {
+            width: 120px;
+            height: 120px;
+            margin: 1rem auto;
+            border: 2px solid #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        /* Main content styles */
+        .banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: #f5f5f5;
+            overflow: hidden;
+            border-bottom: 2px solid #000;
+        }
+
+        .banner-content {
+            display: flex;
+            animation: scroll 20s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .banner-image {
+            height: 200px;
+            width: 200px;
+            object-fit: cover;
+            margin: 0 10px;
+        }
+
+        .monkey {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-image: url('/api/placeholder/80/80');
+            background-size: contain;
+            background-repeat: no-repeat;
+            animation: jump 4s infinite linear;
+        }
+
+        #monkey1 { animation-delay: 0s; }
+        #monkey2 { animation-delay: 1.3s; }
+        #monkey3 { animation-delay: 2.6s; }
+
+        @keyframes jump {
+            0% { left: -100px; top: 70%; }
+            25% { top: 30%; }
+            50% { top: 70%; }
+            75% { top: 30%; }
+            100% { left: 100%; top: 70%; }
+        }
+
+        .proposal {
+            background: #ffffff;
+            padding: 2rem 3rem;
+            border: 2px solid #000;
+            text-align: center;
+            margin: 180px auto 2rem;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #000;
+            font-size: 2rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .subtitle {
+            color: #000;
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: 2px solid #000;
+            background: #fff;
+            color: #000;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        button:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .signature-area {
+            display: none;
+            margin-top: 2rem;
+            text-align: left;
+            border-top: 1px solid #000;
+            padding-top: 1rem;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #000;
+            width: 100%;
+            margin: 1rem 0;
+            height: 50px;
+            position: relative;
+        }
+
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+        }
+
+        .approval-text {
+            font-style: italic;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .date-line {
+            text-align: right;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .legal-text {
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-style: italic;
+        }
+
+        #errorMessage {
+            color: #ff0000;
+            margin-top: 1rem;
+            font-style: italic;
+            display: none;
+        }
+
+        input[type="password"] {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #000;
+            margin-right: 1rem;
+            font-family: 'Times New Roman', serif;
+        }
+
+        /* Celebration - hidden by default */
+        #celebration {
+            display: none;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        #celebration .woohoo {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 2rem;
+            color: #000;
+        }
+
+        /* The canvas for confetti/fireworks. 
+           Positioned absolutely and covers entire screen with pointer-events none. */
+        #myCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999999;
+            pointer-events: none;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include a canvas for fireworks/confetti -->
+    <canvas id="myCanvas"></canvas>
+
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="header">
+                <div class="seal">
+                    <b>FOR THE EXCLUSIVE REVIEW OF <br> MS. VIHA PATEL</b>
+                </div>
+                <h1>RESTRICTED ACCESS</h1>
+            </div>
+            <div class="legal-text">
+                This document contains confidential information protected under the Privacy Act of 1974.
+                Unauthorized access or attempted circumvention of security measures is strictly prohibited.
+            </div>
+
+            <div class="password-form">
+                <input type="password" id="passwordInput" placeholder="Enter Password">
+                <button onclick="verifyPassword()">Proceed</button>
+            </div>
+
+            <div id="errorMessage">Invalid credentials. Access denied.</div>
+        </div>
+    </div>
+
+    <div id="mainContent">
+        <div class="banner">
+            <div class="banner-content">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_5475.JPG" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_6944.jpg
+                " alt="Image from Google Drive" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7083.jpg" alt="Banner 4" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7084.jpg" alt="Banner 5" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7199.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check1.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check2.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_9032.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_5475.JPG" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_6944.jpg
+                " alt="Image from Google Drive" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7083.jpg" alt="Banner 4" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7084.jpg" alt="Banner 5" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7199.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check1.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check2.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_9032.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_5475.JPG" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_6944.jpg
+                " alt="Image from Google Drive" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7083.jpg" alt="Banner 4" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7084.jpg" alt="Banner 5" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7199.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check1.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check2.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_9032.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_5475.JPG" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_6944.jpg
+                " alt="Image from Google Drive" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7083.jpg" alt="Banner 4" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7084.jpg" alt="Banner 5" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7199.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check1.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check2.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_9032.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_5475.JPG" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_6944.jpg
+                " alt="Image from Google Drive" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7083.jpg" alt="Banner 4" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7084.jpg" alt="Banner 5" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_7199.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check1.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/img-check2.jpg" alt="Banner 6" class="banner-image">
+                <img src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/IMG_9032.jpg" alt="Banner 6" class="banner-image">
+            </div>
+        </div>
+
+        <div class="monkey" id="monkey1"></div>
+        <div class="monkey" id="monkey2"></div>
+        <div class="monkey" id="monkey3"></div>
+
+        <div class="proposal">
+            <h1>Will you be girl space friend without the space?</h1>
+            <p class="subtitle">aka chimp girlfriend</p>
+            <div class="buttons">
+                <button id="yesBtn">In Agreement</button>
+                <button id="noBtn">In Opposition</button>
+            </div>
+            
+            <div class="signature-area" id="signatureArea">
+                <div class="legal-text">
+                    IN WITNESS WHEREOF, the undersigned has executed this Agreement as of the date first above written.
+                </div>
+                <div class="signature-line">
+                    <div class="signature" id="signature">Viha Patel</div>
+                </div>
+                <div class="date-line">
+                    Date: <span id="currentDate"></span>
+                </div>
+            </div>
+            
+            <div class="approval-text" id="approvalText">
+                This motion has been approved.
+            </div>
+            
+            <!-- Celebration Div -->
+            <div id="celebration">
+                <div class="woohoo">WOOHOO!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include the canvas-confetti library for a quick celebration effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // Basic password check
+        function verifyPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (password === "monkey") {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        // Add event listener for Enter key
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+
+        // Main content functionality
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const signatureArea = document.getElementById('signatureArea');
+        const signature = document.getElementById('signature');
+        const approvalText = document.getElementById('approvalText');
+        const currentDate = document.getElementById('currentDate');
+        const celebration = document.getElementById('celebration');
+
+        // Clicking "In Agreement"
+        yesBtn.addEventListener('click', () => {
+            // === Play the new audio ===
+            const audio = document.getElementById('myAudio');
+            audio.play();
+            
+            signatureArea.style.display = 'block';
+            yesBtn.style.display = 'none';
+            noBtn.style.display = 'none';
+            
+            const today = new Date();
+            currentDate.textContent = today.toLocaleDateString();
+            
+            setTimeout(() => {
+                signature.style.opacity = '1';
+                signature.style.transform = 'translateY(0)';
+                
+                // After signature appears, display the approval text
+                setTimeout(() => {
+                    approvalText.style.display = 'block';
+
+                    // Then show the "WOOHOO" + confetti
+                    setTimeout(() => {
+                        celebration.style.display = 'block';
+                        launchConfetti();
+                    }, 1000);
+                }, 1000);
+            }, 500);
+        });
+
+        // Moving the "In Opposition" button around
+        noBtn.addEventListener('mouseover', (e) => {
+            const x = Math.random() * (window.innerWidth - e.target.offsetWidth);
+            const y = Math.random() * (window.innerHeight - e.target.offsetHeight);
+            
+            e.target.style.position = 'absolute';
+            e.target.style.left = `${x}px`;
+            e.target.style.top = `${y}px`;
+        });
+
+
+        // Function to launch confetti/fireworks
+        function launchConfetti() {
+            const end = Date.now() + (3 * 1000); // 3 seconds
+            const colors = ['#bb0000', '#ffffff'];
+
+            (function frame() {
+                // Launch a random amount of confetti from random positions
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+                
+                // Keep going until time is up
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+
+    <!-- ===== NEW AUDIO TAG (same format as images) ===== -->
+    <audio
+      id="myAudio"
+      src="https://raw.githubusercontent.com/pranavkrishnan25/images_for_monkey/main/ONLY_YOU.mp3"
+      type="audio/mp3"
+      preload="auto">
+    </audio>
+
+</body>
+</html>
